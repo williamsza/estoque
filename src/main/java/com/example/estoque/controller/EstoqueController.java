@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/estoque")
+@RequestMapping("/api")
 public class EstoqueController {
 
     ProdutoService service;
@@ -20,33 +20,42 @@ public class EstoqueController {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<String> cadastraProduto(@RequestBody Produto produto){
+    @PostMapping("/produtos")
+    public ResponseEntity<String> cadastraProduto(@RequestBody Produto produto) {
         service.cadastrarProduto(produto);
-        return ResponseEntity.ok().body("Cadastrado com Sucesso");
+        return ResponseEntity.status(201).body("Cadastrado com Sucesso");
     }
 
-    @GetMapping
-    public ResponseEntity<List<Produto>> listarProdutos(){
+    @GetMapping("produtos/{id}")
+    public ResponseEntity<List<Produto>> listarProdutos() {
         return ResponseEntity.ok().body(service.encontrarTodos());
     }
 
-    @GetMapping("/{nome}")
-    public ResponseEntity<Produto> buscaProduto(@PathVariable String nome){
+    public ResponseEntity<Produto> buscarProdutoPorId(@PathVariable Long id) {
+        try {
+            Produto produto = service.buscarPorId(id);
+            return ResponseEntity.ok(produto);
+        } catch (ForaDeEstoqueException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    @GetMapping("/produtos")
+    public ResponseEntity<Produto> buscaProduto(@PathVariable String nome) {
         return ResponseEntity.ok().body(service.encontrarPorNome(nome));
     }
 
-    @PostMapping("/atualizar")
-    public ResponseEntity<String> atualizarEstoque(@RequestBody Pedido pedido){
-        try{
+    @PostMapping("/estoque/atualizar")
+    public ResponseEntity<String> atualizarEstoque(@RequestBody Pedido pedido) {
+        try {
             service.atualizarEstoque(pedido);
-        }catch (ForaDeEstoqueException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.ok("Estoque atualizado com sucesso");
+        } catch (ForaDeEstoqueException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+                    //.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok().body("Estoque Atualizado");
     }
-
-
 
 
 }

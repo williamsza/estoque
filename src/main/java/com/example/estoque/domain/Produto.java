@@ -4,15 +4,17 @@ import com.example.estoque.entity.ProdutoEntity;
 
 public class Produto {
 
+    private String id;
     private String nome;
     private String descricao;
     private Double preco;
     private Integer qtd;
 
-    public Produto() {
+    public Produto(long l, String string, int i) {
     }
 
-    public Produto(String nome, String descricao, Double preco, Integer qtd) {
+    public Produto(String id,String nome, String descricao, Double preco, Integer qtd) {
+        this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.preco = preco;
@@ -24,6 +26,10 @@ public class Produto {
         this.descricao = entity.getDescricao();
         this.preco = entity.getPreco();
         this.qtd = entity.getQtd();
+    }
+
+    public Produto() {
+
     }
 
     public String getNome() {
@@ -56,5 +62,13 @@ public class Produto {
 
     public void setQtd(Integer qtd) {
         this.qtd = qtd;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
